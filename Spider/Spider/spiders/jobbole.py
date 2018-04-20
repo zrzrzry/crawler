@@ -1,13 +1,31 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import re
+from scrapy.http import Request
 
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
     allowed_domains = ['blog.jobbole.com']
-    start_urls = ['http://blog.jobbole.com/113854/']
+    start_urls = ['http://blog.jobbole.com/all-posts/']
 
     def parse(self, response):
+        #获取每一页中的具体文章的url并交给scrapy进行下载
+        post_nodes = response.css('#archive .floated-thumb .post-thumb a')
+        for post_node in post_nodes:
+            image_url = post_node.css('img::attr(src)').extract()
+            post_url = post_node.css("::attr(href)").extract()
+            yield Request(url = post_url, meta = {"front_image_url":image_url}, callback = self.parse_detail)
+            print(post_url)
+
+        #提取下一页url
+        next_url = response.css('.margin-20 a.next::attr(href)').extract()
+        if next_url:
+           yield Request(url = next_url, callback = self.parse)
+
+    def parse_detail(self, response):
+        #对文章具体内容字段的处理
+
+        front_image_url = response.meta.get("image_url","")
         title = response.xpath('//*[@class="entry-header"]/h1/text()')
         create_date =  response.xpath('//*[@class="entry-meta"]/p/text()').extract()[0].strip().replace("·","")
         like = 0
