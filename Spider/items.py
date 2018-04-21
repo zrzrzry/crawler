@@ -23,3 +23,4 @@ class ArticleItem(scrapy.Item):
     url_object_id = scrapy.Field()
     front_image_url = scrapy.Field()
     front_image_path = scrapy.Field()
+    tag_list = scrapy.Field()
