@@ -4,6 +4,7 @@ import re
 from scrapy.http import Request
 # from Spider.items import ArticleItem
 from Spider.items import ArticleItem
+from Spider.utils.common import get_md5
 
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
@@ -16,21 +17,21 @@ class JobboleSpider(scrapy.Spider):
         for post_node in post_nodes:
             image_url = post_node.css('img::attr(src)').extract()[0]
             post_url = post_node.css("::attr(href)").extract()[0]
-            yield Request(url = post_url, meta = {"front_image_url":image_url}, callback = self.parse_detail)
+            yield Request(url=post_url, meta={"front_image_url": image_url}, callback=self.parse_detail)
             print(post_url)
 
         #提取下一页url
         next_url = response.css('.margin-20 a.next::attr(href)').extract_first("")
         if next_url:
-           yield Request(url = next_url, callback = self.parse)
+           yield Request(url=next_url, callback=self.parse)
 
     def parse_detail(self, response):
         #对文章具体内容字段的处理
 
         article_item = ArticleItem()
 
-        front_image_url = response.meta.get("image_url","")
-        title = response.xpath('//*[@class="entry-header"]/h1/text()')
+        front_image_url = response.meta.get("front_image_url","")
+        title = response.xpath('//*[@class="entry-header"]/h1/text()').extract_first("")
         create_date =  response.xpath('//*[@class="entry-meta"]/p/text()').extract()[0].strip().replace("·","")
         like = 0
         bookmark = 0
@@ -64,7 +65,8 @@ class JobboleSpider(scrapy.Spider):
         tag_list = response.xpath('//*[@class="entry-meta"]/p/a/text()').extract()
 
         article_item["title"] = title
-        article_item["front_image_url"] = front_image_url
+        article_item["front_image_url"] = [front_image_url]
+        article_item["url_object_id"] = get_md5(response.url)
         article_item["tag_list"] = tag_list
         article_item["bookmark"] = bookmark
         article_item["comment"] = comment

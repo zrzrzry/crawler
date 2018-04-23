@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import os
 # Scrapy settings for Spider project
 #
 # For simplicity, this file contains only settings considered important or
@@ -66,7 +66,12 @@ ROBOTSTXT_OBEY = False
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'Spider.pipelines.SpiderPipeline': 300,
+   #'scrapy.pipelines.images.ImagesPipeline': 1,
+   'Spider.pipelines.ArticleImagePipeline': 1,
 }
+IMAGES_URLS_FIELD = "front_image_url"#配置使用item里的那个字段进入imagepipeline
+image_dir = os.path.abspath(os.path.dirname(__file__))
+IMAGES_STORE = os.path.join(image_dir, 'images')
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
