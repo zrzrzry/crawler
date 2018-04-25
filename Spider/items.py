@@ -24,3 +24,19 @@ class ArticleItem(scrapy.Item):
     front_image_url = scrapy.Field()
     front_image_path = scrapy.Field()
     tag_list = scrapy.Field()
+pass
+
+#定义servant item类将数据存入pipeline
+class ServantItem(scrapy.Item):
+    id = scrapy.Field()
+    name = scrapy.Field()
+    name_jp = scrapy.Field()
+    name_en = scrapy.Field()
+    image_url = scrapy.Field()
+    image_path = scrapy.Field()
+    servant_class = scrapy.Field()
+    lv1_hp = scrapy.Field()
+    lv1_atk = scrapy.Field()
+    lvmax4_hp = scrapy.Field()
+    lvmax4_atk = scrapy.Field()
+    t_prop = scrapy.Fieldq()
