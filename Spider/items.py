@@ -39,4 +39,4 @@ class ServantItem(scrapy.Item):
     lv1_atk = scrapy.Field()
     lvmax4_hp = scrapy.Field()
     lvmax4_atk = scrapy.Field()
-    t_prop = scrapy.Fieldq()
+    t_prop = scrapy.Field()
