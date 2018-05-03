@@ -31,20 +31,32 @@ class fgo_wiki_servant(scrapy.Spider):
         servant_nums = browser.find_elements_by_class_name('pull-left').__len__()
         # 提取出从者详细信息页面的url
         temp = 1
-        while temp < servant_nums:
+        while temp < 2:
             url_count = str(temp)
+            servant_id = temp
             servant_url = browser.find_element_by_css_selector('[data-id="' + url_count + '"] a').get_attribute("href")
             servant_avatar_url = browser.find_element_by_css_selector('[data-id="' + url_count + '"] .td.img.fl img').get_attribute("src")
             print(servant_url)
             print(servant_avatar_url)
-            yield Request(url=servant_url, callback=self.parse_detail(), meta={"servant_avatar_url":servant_avatar_url})
+            yield Request(url=servant_url, callback=self.parse_detail(id=servant_id), meta={"servant_avatar_url":servant_avatar_url})
             temp += 1
         #关闭浏览器
         browser.close()
     pass
 
-    def parse_detail(self, response):
+    def parse_detail(self, response, id):
         #获取servant具体数据
+        browser = webdriver.Chrome()
+        browser.get(response.url)
+        #response.xpath('//*[@id="row-move"]/div[2]/div/div[2]/div/div/table[1]/tbody/tr[1]/th/div')
+        #爬取关键数据
+        servant_name = browser.find_element_by_css_selector('.NAME').text
+        servant_name_en = browser.find_element_by_css_selector('.NAME_EN').text
+        servant_name_jp = browser.find_element_by_css_selector('.NAME_JP').text
+        servant_class = browser.find_element_by_css_selector('.')
+
         servant = ServantItem()
-        servant['name'] = response.xpath('')
+        servant['name'] = servant_name
+        servant['id'] = id
+
     pass
